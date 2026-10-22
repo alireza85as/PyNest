@@ -2,7 +2,7 @@
 
 > Describe your project — PyNest picks the right packages with an LLM, creates the virtual environment, installs everything, and writes `requirements.txt`.
 
-PyNest is a CLI wizard that removes the boring setup from starting a Python project. Describe what you want to build in plain English (an LLM suggests the PyPI packages) or type the package names yourself. Every package is validated against PyPI and your local Python version, nothing is installed until you approve, and you end up with a ready-to-code project folder.
+PyNest is a CLI wizard that removes the boring setup from starting a Python project. Describe what you want to build (an LLM suggests the PyPI packages) or type the package names yourself. Every package is validated against PyPI and your local Python version, nothing is installed until you approve, and you end up with a ready-to-code project folder.
 
 ## Features
 
