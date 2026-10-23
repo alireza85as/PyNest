@@ -1,98 +1,173 @@
 # PyNest
 
-> Describe your project — PyNest picks the right packages with an LLM, creates the virtual environment, installs everything, and writes `requirements.txt`.
+**Describe your project. Get the right packages. Start coding.**
 
-PyNest is a CLI wizard that removes the boring setup from starting a Python project. Describe what you want to build (an LLM suggests the PyPI packages) or type the package names yourself. Every package is validated against PyPI and your local Python version, nothing is installed until you approve, and you end up with a ready-to-code project folder.
+PyNest is an LLM-powered CLI wizard that simplifies Python project setup. Describe your project in plain English to receive package recommendations, or specify dependencies manually. PyNest validates packages against PyPI and your local Python version, creates a virtual environment, installs approved dependencies, and generates a pinned `requirements.txt` file.
+
+**[▶ Watch the Project Demo](https://youtu.be/3szYAa6oRUQ)** · **[GitHub Repository](https://github.com/alireza85as/pynest)**
 
 ## Features
 
-- **LLM-powered suggestions** — describe your idea, get a reviewed package list via **Google Gemini** or any OpenAI-compatible API (OpenAI, OpenRouter, Groq, Ollama, ...).
-- **Manual mode** — already know your packages? Just type them: `requests, numpy>=1.24`.
-- **Compatibility checks** — each package is verified on PyPI and matched against your installed Python version (`requires_python`) before anything is installed.
-- **Automatic scaffolding** — creates the project folder and a `.venv`, installs the approved packages, and freezes a pinned `requirements.txt`.
-- **Safe by default** — nothing is installed until you confirm; API keys live in `.env`, which is never committed.
+- **LLM-Powered Package Suggestions** — Describe your project in plain English and receive relevant package recommendations using Google Gemini or any OpenAI-compatible API, including OpenAI, OpenRouter, Groq, and Ollama.
+- **Manual Package Selection** — Specify packages and version constraints directly, such as `requests` or `numpy>=1.24`.
+- **Package Validation** — Verify that packages exist on PyPI and check their declared Python version requirements against your local Python interpreter.
+- **Automated Project Setup** — Create the project directory and a dedicated `.venv` virtual environment, then install approved dependencies.
+- **Pinned Dependencies** — Generate a `requirements.txt` file containing the installed package versions.
+- **User-Controlled Installation** — Review the proposed packages and confirm before installation begins.
+- **Environment-Based Configuration** — Store API credentials in `.env` instead of committing secrets to version control.
 
 ## Requirements
 
-- Python **3.10+**
-- An API key for the LLM provider (only needed for "describe" mode)
+- Python 3.10 or later
+- An LLM provider API key for `describe` mode
+- Internet access for package validation, LLM requests, and dependency installation
 
-## Quick start
+Manual mode does not require an LLM API key.
+
+## Installation
+
+Clone the repository and install PyNest's dependencies:
 
 ```bash
 git clone https://github.com/alireza85as/pynest.git
 cd pynest
 pip install -r requirements.txt
+```
 
-cp .env.example .env   # then edit .env and set your API key
+Create your environment configuration file:
 
+**Windows (PowerShell):**
+
+```powershell
+Copy-Item .env.example .env
+```
+
+**Linux / macOS:**
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and configure your LLM provider if you intend to use `describe` mode.
+
+Run PyNest:
+
+```bash
 python project.py
 ```
 
-The wizard will ask:
+## Usage
 
-1. **Where the project should live** — an existing or new folder path.
-2. **How to pick packages** — `describe` (LLM) or `manual`.
-3. **Confirmation** — a table of the proposed packages; nothing installs before you agree.
+PyNest guides you through three main steps:
 
-## Example session
+1. **Choose a project location** — specify an existing or new directory for your project.
+2. **Select a package selection mode** — choose `describe` for LLM-powered recommendations or `manual` to enter dependencies yourself.
+3. **Review and confirm** — inspect the proposed packages and approve the installation.
+
+Once confirmed, PyNest creates the virtual environment, installs the selected dependencies, and generates `requirements.txt`.
+
+## Example
+
+Suppose you want to build a web scraper that extracts article information and exports it to CSV.
+
+Describe your project:
 
 ```text
-Where should the project live? (folder path): C:\code\web-scraper
-How do you want to pick packages? [describe/manual] (describe): describe
-Describe the project you want to build: a web scraper that saves articles to CSV
+I want to create a web scraper that extracts article titles
+and URLs from websites and saves them to a CSV file.
+I need suitable Python packages for this project.
+```
 
-Proposed packages (Python 3.11.15)
- #  Package         Version  Why
- 1  requests        latest   fetch pages over HTTP
- 2  beautifulsoup4  latest   parse HTML content
- 3  pandas          latest   store results as CSV
+PyNest may recommend packages such as:
 
-Install these packages? [Y/n]: y
-...
+| Package | Purpose |
+|---|---|
+| `requests` | Fetch web pages over HTTP |
+| `beautifulsoup4` | Parse HTML and extract article information |
+| `pandas` | Organize data and export it to CSV |
+
+The actual recommendations depend on the LLM response and the project description.
+
+After reviewing the package list, approve the installation to continue.
+
+Example output:
+
+```text
 Project is ready!
 Folder: C:\code\web-scraper
+
 Activate the environment:
   C:\code\web-scraper\.venv\Scripts\activate
 ```
 
-## Configuration (`.env`)
+## Configuration
+
+PyNest uses a `.env` file to configure the LLM provider.
 
 | Variable | Required | Description |
 |---|---|---|
-| `LLM_PROVIDER` | no | `openai` (default) or `gemini` |
-| `OPENAI_API_KEY` | yes (openai provider) | Your OpenAI-compatible API key |
-| `OPENAI_BASE_URL` | no | Any OpenAI-compatible endpoint (OpenRouter, Groq, Ollama, ...) |
-| `OPENAI_MODEL` | no | Model name (default: `gpt-4o-mini`) |
-| `GEMINI_API_KEY` | yes (gemini provider) | Your Google AI Studio key |
-| `GEMINI_MODEL` | no | Model name (default: `gemini-2.5-flash`) |
+| `LLM_PROVIDER` | No | Provider selection: `openai` (default) or `gemini` |
+| `OPENAI_API_KEY` | For OpenAI-compatible providers | API key for the selected endpoint |
+| `OPENAI_BASE_URL` | No | Custom OpenAI-compatible API endpoint |
+| `OPENAI_MODEL` | No | Model name; defaults to `gpt-4o-mini` |
+| `GEMINI_API_KEY` | For Gemini | Google AI Studio API key |
+| `GEMINI_MODEL` | No | Gemini model; defaults to `gemini-2.5-flash` |
 
-To use Gemini instead of OpenAI:
+### Using Google Gemini
+
+Configure your `.env` file:
 
 ```ini
 LLM_PROVIDER=gemini
 GEMINI_API_KEY=your-google-ai-studio-key
 ```
 
+### Using an OpenAI-Compatible API
+
+```ini
+LLM_PROVIDER=openai
+OPENAI_API_KEY=your-api-key
+OPENAI_BASE_URL=your-provider-endpoint
+OPENAI_MODEL=your-model-name
+```
+
+Use the endpoint and model name provided by your chosen service. Never commit your actual API keys to GitHub.
+
 ## Testing
+
+PyNest includes an automated test suite built with `pytest`.
+
+Run the tests from the project root:
 
 ```bash
 pytest
 ```
 
-## Project structure
+## Project Structure
 
 ```text
 pynest/
-├── project.py        # CLI wizard: main(), PyPI validation, venv setup
-├── llm.py            # LLM providers (OpenAI/Gemini) + reply parsing
-├── test_project.py   # pytest suite
-├── requirements.txt  # PyNest's own dependencies
-└── .env.example      # template for API keys
+├── project.py        # CLI workflow, PyPI validation, and environment setup
+├── llm.py            # LLM provider integration and response parsing
+├── test_project.py   # Automated tests
+├── requirements.txt  # PyNest's dependencies
+└── .env.example      # Environment configuration template
 ```
 
 ## Roadmap
 
-- [ ] Editable package list before install
-- [ ] Node.js / npm support
-- [ ] Starter templates (README, .gitignore) for generated projects
+- [ ] Allow users to edit the proposed package list before installation
+- [ ] Add Node.js and npm project support
+- [ ] Generate starter files such as `README.md` and `.gitignore`
+
+## Built With
+
+- Python
+- Google Gemini and OpenAI-compatible LLM APIs
+- PyPI
+- `venv` and `pip`
+- `pytest`
+
+---
+
+**PyNest — Spend less time setting up projects and more time building them.**
